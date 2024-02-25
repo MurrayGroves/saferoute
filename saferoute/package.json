@@ -5,6 +5,7 @@
   "dependencies": {
     "@emotion/react": "^11.11.3",
     "@emotion/styled": "^11.11.0",
+    "@googlemaps/polyline-codec": "^1.0.28",
     "@mui/material": "^5.15.11",
     "@mui/styles": "^5.15.11",
     "@opentripplanner/base-map": "^3.0.17",
@@ -48,5 +49,8 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
+  },
+  "devDependencies": {
+    "@types/geojson": "^7946.0.14"
   }
 }
