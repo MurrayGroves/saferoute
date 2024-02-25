@@ -6,6 +6,7 @@ import { Paper, TextField } from "@mui/material";
 
 import Autocomplete, { usePlacesWidget } from "react-google-autocomplete";
 import { ClickableMap } from "./ClickableMap";
+import { GeolocateControl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { LatLong, PatchedItinerary, PathFindingResponse } from "./types";
 import { routeToFeature } from "./routeUtils";
