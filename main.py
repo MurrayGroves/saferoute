@@ -16,11 +16,9 @@ class OpenTripPlanner():
                  arriveBy="FALSE"):
         
         request = self.host + "/otp/routers/default/plan?fromPlace=" + source + "&toPlace=" + destination + "&time=" + time + "&date=" + date + "&MODE=" + mode + "&arriveBy=" + arriveBy
-        result = requests.get(request).json()
-        print(result)
+        return request
 
-otp = OpenTripPlanner()
-otp.Distance(source="45.51693,-122.68021", destination="45.52138, -122.67815")
+
 
         
 
