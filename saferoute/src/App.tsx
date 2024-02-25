@@ -1,6 +1,4 @@
-import React from 'react';
-import logo from './logo.svg';
-import BaseMap from '@opentripplanner/base-map'
+import React from "react";
 
 import './App.css';
 import { Input, Paper, TextField } from '@mui/material';
@@ -19,9 +17,15 @@ function App() {
           style={{border: 'none', width: '90%', height: '100%', fontSize: '120%', backgroundColor: 'rgba(0, 0, 0, 0)', outline: 'none', borderColor: 'transparent'}} placeholder="Search" />
       </Paper>
 
-      <BaseMap center={[51.49350, -2.57634]} style={{ position: 'absolute', top: '0%', height: '100%', zIndex: '-1' }} mapLibreProps={{ attributionControl: false }}>
-
-      </BaseMap>
+      <ClickableMap
+        start={start}
+        end={end}
+        setStart={setStart}
+        setEnd={setEnd}
+        initialViewState={{ latitude: 51.4935, longitude: -2.57634, zoom: 12 }}
+        attributionControl={false}
+        style={{ width: "100vw", height: "100vw" }}
+      ></ClickableMap>
     </div>
   );
 }
