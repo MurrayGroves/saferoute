@@ -1,7 +1,10 @@
-import { Map } from "react-map-gl/maplibre";
+import { GeolocateControl, Map } from "react-map-gl/maplibre";
 import { Marker } from "react-map-gl/maplibre";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { LatLong, UnwrapForwardRefExoticComponent } from "./types";
+import { useEffect, useRef } from "react";
+import useTimeout from "@mui/utils/useTimeout";
+import {GeolocateControl as MaplibreGeolocateControl} from "maplibre-gl";
 
 export type Props = {
   start: LatLong | undefined;
@@ -17,6 +20,13 @@ export const ClickableMap = ({
   setEnd,
   ...props
 }: Props & UnwrapForwardRefExoticComponent<typeof Map>): JSX.Element => {
+  const locator = useRef<MaplibreGeolocateControl>(null);
+
+  useEffect(() => {
+    // Activate as soon as the control is loaded
+    locator.current?.trigger();
+  }, [locator.current]);
+
   return (
     <Map
       mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
@@ -35,6 +45,7 @@ export const ClickableMap = ({
       }}
       {...props}
     >
+      <GeolocateControl ref={locator} position="bottom-right"/>
       {start && (
         <Marker
           key="start"
