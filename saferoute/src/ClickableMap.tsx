@@ -41,9 +41,7 @@ export const ClickableMap = ({
           color="red"
           latitude={start[0]}
           longitude={start[1]}
-        >
-          {/* <Pin /> */}
-        </Marker>
+        ></Marker>
       )}
       {end && (
         <Marker
@@ -53,6 +51,8 @@ export const ClickableMap = ({
           longitude={end[1]}
         ></Marker>
       )}
+
+      {props.children}
     </Map>
   );
 };
