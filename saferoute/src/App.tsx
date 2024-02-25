@@ -24,8 +24,8 @@ const useStyles = makeStyles((theme: any) => ({
 }));
 
 function App() {
-  const [start, setStart] = React.useState<LatLong|undefined>([ 51.47132767219449,-2.6145690679550175]);
-  const [end, setEnd] = React.useState<LatLong|undefined>([51.46420297562347,-2.594809234142304]);
+  const [start, setStart] = React.useState<LatLong>();
+  const [end, setEnd] = React.useState<LatLong>();
   const [route, setRoute] = React.useState<PatchedItinerary[]>();
 
   useEffect(() => {
@@ -37,7 +37,6 @@ function App() {
       )
         .then((response) => response.json() as Promise<PathFindingResponse>)
         .then((response) => {
-          console.log(routeToFeature(response.plan.itineraries));
           setRoute(response.plan.itineraries);
         });
     }
