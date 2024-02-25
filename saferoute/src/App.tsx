@@ -16,9 +16,10 @@ function App() {
 
   return (
     <div className="App" style={{justifyContent: 'center', display: 'flex'}}>
-      <Paper sx={{borderRadius: "25px", width: '90%', marginTop: '5%', height: '5vh', position: 'absolute'}}>
+      <Paper sx={{borderRadius: "25px", width: '90%', marginTop: '5%', height: '5vh', position: 'absolute', zIndex: '100'}}>
         <Autocomplete apiKey={process.env.REACT_APP_GOOGLE_KEY} options={{types: []}}
-          style={{border: 'none', width: '90%', height: '100%', fontSize: '120%', backgroundColor: 'rgba(0, 0, 0, 0)', outline: 'none', borderColor: 'transparent'}} placeholder="Search" />
+          style={{border: 'none', width: '90%', height: '100%', fontSize: '120%'
+          , backgroundColor: 'rgba(0, 0, 0, 0)', outline: 'none', borderColor: 'transparent'}} placeholder="Search" />
       </Paper>
 
       <ClickableMap
@@ -28,7 +29,7 @@ function App() {
         setEnd={setEnd}
         initialViewState={{ latitude: 51.4935, longitude: -2.57634, zoom: 12 }}
         attributionControl={false}
-        style={{ width: "100vw", height: "100vh", zIndex: '-1' }}
+        style={{ width: "100vw", height: "100vh" }}
       ></ClickableMap>
     </div>
   );
