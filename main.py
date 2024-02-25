@@ -24,6 +24,8 @@ class OpenTripPlanner():
         geolocator = Nominatim(user_agent="http")
         location = geolocator.geocode(address)
         return (location.latitude, location.longitude)
+    
+    
 
 
 
