@@ -18,7 +18,7 @@ class OpenTripPlanner():
         
         request = self.host + "/otp/routers/default/plan?fromPlace=" + source + "&toPlace=" + destination + "&time=" + time + "&date=" + date + "&MODE=" + mode + "&arriveBy=" + arriveBy
         response = requests.get(request)
-        return response
+        return response.json()
     
     def AddressToCoord(self, address):
         geolocator = Nominatim(user_agent="http")
