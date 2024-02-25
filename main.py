@@ -1,6 +1,6 @@
 import datetime
 import requests
-import json
+from geopy.geocoders import Nominatim
 
 
 class OpenTripPlanner():
@@ -19,9 +19,12 @@ class OpenTripPlanner():
         request = self.host + "/otp/routers/default/plan?fromPlace=" + source + "&toPlace=" + destination + "&time=" + time + "&date=" + date + "&MODE=" + mode + "&arriveBy=" + arriveBy
         response = requests.get(request)
         return response
+    
+    def AddressToCoord(self, address):
+        geolocator = Nominatim(user_agent="http")
+        location = geolocator.geocode(address)
+        return (location.latitude, location.longitude)
 
-
-        
 
 
 
