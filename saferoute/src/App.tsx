@@ -34,7 +34,7 @@ function App() {
       setNewRoute(undefined);
       return;
     }
-    fetch(`http://localhost:8080/route?start=${start}&end=${end}&weight=${weight ? 'safety': 'travel_time'}`).then(
+    fetch(`http://localhost:8080/route?start=${start}&end=${end}&weight=${weight ? 'combined_index': 'travel_time'}`).then(
       (response) => {
         response.json().then((data) => {
           let coordsList = data["route"];

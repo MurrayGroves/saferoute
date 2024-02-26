@@ -16,7 +16,7 @@ def add_combined_index(G, precision=None):
     if precision is None:
         precision = 1
     edges = utils_graph.graph_to_gdfs(G, nodes=False, fill_edge_geometry=False)
-    edges["combined_index"] = edges["travel_time"] + edges["safety"]
+    edges["combined_index"] = np.clip(a=(edges["travel_time"] + edges["safety"] - edges["streetlight"]), a_min=0, a_max=None)
     nx.set_edge_attributes(G, values=edges["combined_index"], name="combined_index")
     return G
 
@@ -24,6 +24,12 @@ def add_edge_safety_index(G, precision=None):
     edges = utils_graph.graph_to_gdfs(G, nodes=False, fill_edge_geometry=False)
     edges["safety"] = 1
     nx.set_edge_attributes(G, values=edges["safety"], name="safety")
+    return G
+
+def add_streetlight_index(G, precision=None):
+    edges = utils_graph.graph_to_gdfs(G, nodes=False, fill_edge_geometry=False)
+    edges["streetlight"] = 1
+    nx.set_edge_attributes(G, values=edges["streetlight"], name="streetlight")
     return G
 
 def crime_score(crime, score):
@@ -54,6 +60,7 @@ else:
 nx.set_edge_attributes(G, values=4, name="speed_kph")
 G = ox.add_edge_travel_times(G)
 G = add_edge_safety_index(G)
+G = add_streetlight_index(G)
 
 def add_node(G, connectingNodes, x, y, direction):
     newId = f"{len(G.nodes) + 1}-custom"
@@ -97,6 +104,23 @@ with open("crime_data.csv", newline='') as f:
         _, index = kd_tree.query((longitude, latitude))
         safety = G[edges[index][0]][edges[index][1]][0]["safety"]
         G[edges[index][0]][edges[index][1]][0]["safety"] = crime_score(row[2], safety)
+
+with open("streetlights.csv", newline='') as f:
+    reader = csv.reader(f, delimiter=',')
+    linecount = 1
+    for row in reader:
+        if linecount == 1:
+            linecount += 1
+            continue
+        longitude = float(row[0])
+        latitude = float(row[1])
+        if longitude < -2.642410 or longitude > -2.463330 or latitude < 51.401792 or latitude > 51.523830:
+            continue
+        _, index = kd_tree.query((longitude, latitude))
+        streetlight = G[edges[index][0]][edges[index][1]][0]["streetlight"]
+        G[edges[index][0]][edges[index][1]][0]["streetlight"] = streetlight + 1
+
+
 
 G = add_combined_index(G)
 
