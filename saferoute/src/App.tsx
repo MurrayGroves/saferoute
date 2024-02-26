@@ -2,9 +2,10 @@ import React, { useEffect, RefObject } from "react";
 import { Layer, Source } from "react-map-gl/maplibre";
 
 import "./App.css";
-import { Paper, TextField } from "@mui/material";
+import { Marker } from "react-map-gl/maplibre";
+import { Paper } from "@mui/material";
 
-import Autocomplete, { usePlacesWidget } from "react-google-autocomplete";
+import { usePlacesWidget } from "react-google-autocomplete";
 import { ClickableMap } from "./ClickableMap";
 import { GeolocateControl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
@@ -12,7 +13,7 @@ import { LatLong, PatchedItinerary, PathFindingResponse } from "./types";
 import { routeToFeature } from "./routeUtils";
 
 const pathFindingURL =
-  "http://100.86.237.92:8080/otp/routers/default/plan?fromPlace={from}&toPlace={to}}&time=2:05pm&date=25-02-24&MODE=BICYCLE&arriveBy=FALSE&showIntermediateStops=true&wheelchair=FALSE";
+  "http://100.86.237.92:8080/otp/routers/default/plan?fromPlace={from}&toPlace={to}}&time=2:05pm&date=25-02-24&MODE=BICYCLE&arriveBy=FALSE&showIntermediateStops=true&wheelchair=TRUE";
 
 function App() {
   const [search, setSearch] = React.useState("");
@@ -20,10 +21,32 @@ function App() {
   const [start, setStart] = React.useState<LatLong>();
   const [end, setEnd] = React.useState<LatLong>();
   const [route, setRoute] = React.useState<PatchedItinerary[]>();
+  const [markers, setMarkers] = React.useState<LatLong[]>([]);
 
   useEffect(() => {
+    fetch("https://overpass-api.de/api/interpreter", {
+      method: "POST",
+      // headers: {
+      //   Accept: "application/json",
+      //   "Content-Type": "application/json",
+      // },
+      body:
+        "data=" +
+        encodeURIComponent(`
+        [out:json];
+        node(51.4935,-2.57634,51.5935,-2.67634);
+out;
+        `),
+    })
+      .then((response) => response.json())
+      .then((x) =>
+        setMarkers(
+          x.elements
+            .filter((e: any) => e.tags?.amenity)
+            .map((e: any) => [e.lat, e.lon])
+        )
+      );
     if (start && end) {
-    
       fetch(
         pathFindingURL
           .replace("{from}", encodeURIComponent(start.join(",")))
@@ -149,6 +172,14 @@ function App() {
             />
           </Source>
         )}
+        {markers.map((marker, index) => (
+          <Marker
+            key={index}
+            // id={`marker-${index}`}
+            latitude={marker[0]}
+            longitude={marker[1]}
+          ></Marker>
+        ))}
       </ClickableMap>
     </div>
   );
