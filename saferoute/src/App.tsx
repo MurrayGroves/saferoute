@@ -100,7 +100,12 @@ out;
       ];
       setStart(loc);
     },
-    options: { types: [] },
+    options: { types: [], bounds: {
+      north: 51.5,
+      south: 51.4,
+      west: -2.66834,
+      east: -2.45634,
+    }},
   });
 
   const fromRef = refs.ref;
@@ -118,7 +123,12 @@ out;
       ];
       setEnd(loc);
     },
-    options: { types: [] },
+    options: { types: [], bounds: {
+      north: 51.5,
+      south: 51.4,
+      west: -2.66834,
+      east: -2.45634,
+    } },
   });
 
   const toRef = refs.ref;
