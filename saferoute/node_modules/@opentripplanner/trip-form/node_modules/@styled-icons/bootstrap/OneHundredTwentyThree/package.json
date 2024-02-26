@@ -1,7 +1,0 @@
-{
-  "private": true,
-  "sideEffects": false,
-  "main": "./OneHundredTwentyThree.js",
-  "module": "./OneHundredTwentyThree.esm.js",
-  "types": "./OneHundredTwentyThree.d.ts"
-}
