@@ -55,7 +55,6 @@ def get_reference_points(G):
 references, edges = get_reference_points(G)
 references = np.array(references)
 kd_tree = KDTree(references)
-queries = []
 with open("crime_data.csv", newline='') as f:
     reader = csv.reader(f, delimiter=',')
     linecount = 1
@@ -70,10 +69,16 @@ with open("crime_data.csv", newline='') as f:
         _, index = kd_tree.query((longitude, latitude))
         safety = G[edges[index][0]][edges[index][1]][0]["safety"]
         G[edges[index][0]][edges[index][1]][0]["safety"] = crime_score(row[2], safety)
-        print(G[edges[index][0]][edges[index][1]][0]["safety"], references[index])
 
 G = add_combined_index(G)
-orig, dest = list(G)[0], list(G)[-1]
+orig, dest = list(G)[0], list(G)[5]
 route = nx.shortest_path(G, orig, dest, weight='combinedIndex')
-print(route)
+coords = []
+for r in route:
+    x = G.nodes[r]['x']
+    y = G.nodes[r]['y']
+    coords.append((y,x))
+
+
+
 
