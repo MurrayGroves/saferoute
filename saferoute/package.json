@@ -1,0 +1,62 @@
+{
+  "name": "saferoute",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.3",
+    "@emotion/styled": "^11.11.0",
+    "@googlemaps/polyline-codec": "^1.0.28",
+    "@mui/material": "^5.15.11",
+    "@mui/styles": "^5.15.11",
+    "@opentripplanner/base-map": "^3.0.17",
+    "@opentripplanner/types": "^6.4.0",
+    "@testing-library/jest-dom": "^5.14.1",
+    "@testing-library/react": "^13.0.0",
+    "@testing-library/user-event": "^13.2.1",
+    "@types/jest": "^27.0.1",
+    "@types/node": "^20.11.20",
+    "@types/react": "^18.0.0",
+    "@types/react-dom": "^18.0.0",
+    "maplibre-gl": "^4.0.2",
+    "otp-ui": "^0.1.2",
+
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
+    "react-google-autocomplete": "^2.7.3",
+    "react-google-places-autocomplete": "^4.0.1",
+    "react-map-gl": "^7.1.7",
+    "react-scripts": "5.0.1",
+    "typescript": "^4.4.2",
+    "web-vitals": "^2.1.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@types/geojson": "^7946.0.14",
+    "dts-gen": "^0.10.0",
+    "jsdoc": "^4.0.2",
+    "tsd-jsdoc": "^2.5.0"
+  }
+}
