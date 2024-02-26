@@ -3,7 +3,7 @@ import { Layer, Source } from "react-map-gl/maplibre";
 
 import "./App.css";
 import { Marker } from "react-map-gl/maplibre";
-import { Paper, Switch, ToggleButton } from "@mui/material";
+import { FormControlLabel, FormGroup, Paper, Switch, ToggleButton } from "@mui/material";
 
 import { usePlacesWidget } from "react-google-autocomplete";
 import { ClickableMap } from "./ClickableMap";
@@ -34,7 +34,7 @@ function App() {
       setNewRoute(undefined);
       return;
     }
-    fetch(`http://localhost:8080/route?start=${start}&end=${end}&weight=${weight ? 'safety': 'travel_time'}`).then(
+    fetch(`http://localhost:8080/route?start=${start}&end=${end}&weight=${weight ? 'combined_index': 'travel_time'}`).then(
       (response) => {
         response.json().then((data) => {
           let coordsList = data["route"];
@@ -100,7 +100,12 @@ out;
       ];
       setStart(loc);
     },
-    options: { types: [] },
+    options: { types: [], bounds: {
+      north: 51.5,
+      south: 51.4,
+      west: -2.66834,
+      east: -2.45634,
+    }},
   });
 
   const fromRef = refs.ref;
@@ -118,7 +123,12 @@ out;
       ];
       setEnd(loc);
     },
-    options: { types: [] },
+    options: { types: [], bounds: {
+      north: 51.5,
+      south: 51.4,
+      west: -2.66834,
+      east: -2.45634,
+    } },
   });
 
   const toRef = refs.ref;
@@ -177,7 +187,12 @@ out;
         />
       </Paper>
 
-      <Switch sx={{position: 'absolute', bottom: '1%', zIndex: '5'}} checked={weight} onChange={(e) => setWeight(e.target.checked)}></Switch>
+      <Paper sx={{ position: 'absolute', bottom: '2%', zIndex: '5', paddingLeft: '3%', paddingRight: '1%' }}>
+      <FormGroup >
+        <FormControlLabel control={<Switch checked={weight} onChange={(e) => setWeight(e.target.checked)} />} label={"Fastest/Safest"}/>
+      </FormGroup>
+      </Paper>
+      
 
       <ClickableMap
         start={start}
