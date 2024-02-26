@@ -1,26 +1,66 @@
-import React, { useEffect, RefObject } from "react";
+import React, { useEffect, RefObject, useState } from "react";
 import { Layer, Source } from "react-map-gl/maplibre";
 
 import "./App.css";
 import { Marker } from "react-map-gl/maplibre";
-import { Paper } from "@mui/material";
+import { Paper, Switch, ToggleButton } from "@mui/material";
 
 import { usePlacesWidget } from "react-google-autocomplete";
 import { ClickableMap } from "./ClickableMap";
 import "maplibre-gl/dist/maplibre-gl.css";
-import { LatLong, PatchedItinerary, PathFindingResponse } from "./types";
-import { routeToFeature } from "./routeUtils";
+import { LatLong } from "./types";
+import { Feature, LineString } from "geojson";
 
-const pathFindingURL =
-  "http://100.86.237.92:8080/otp/routers/default/plan?fromPlace={from}&toPlace={to}}&time=2:05pm&date=25-02-24&MODE=BICYCLE&arriveBy=FALSE&showIntermediateStops=true&wheelchair=TRUE";
+function coordsToFeature(coords: LatLong[]): Feature<LineString> {
+  return {
+    type: "Feature",
+    properties: {},
+    geometry: {
+      type: "LineString",
+      coordinates: coords.map((coord) => [coord[1], coord[0]]),
+    },
+  };
+}
 
 function App() {
-  const [search, setSearch] = React.useState("");
-  const [mapsValue, setMapsValue] = React.useState(null);
   const [start, setStart] = React.useState<LatLong>();
   const [end, setEnd] = React.useState<LatLong>();
-  const [route, setRoute] = React.useState<PatchedItinerary[]>();
   const [markers, setMarkers] = React.useState<LatLong[]>([]);
+  const [newRoute, setNewRoute] = useState<LatLong[]>();
+  const [weight, setWeight] = useState(true);
+
+  useEffect(() => {
+    if (!start || !end) {
+      setNewRoute(undefined);
+      return;
+    }
+    fetch(`http://localhost:8080/route?start=${start}&end=${end}&weight=${weight ? 'combinedIndex': 'travel_time'}`).then(
+      (response) => {
+        response.json().then((data) => {
+          let coordsList = data["route"];
+          console.log(coordsList);
+          setNewRoute(coordsList);
+          let coordsString = "";
+          for (let i = 0; i < coordsList.length; i++) {
+            coordsString += coordsList[i][0] + "," + coordsList[i][1] + ";";
+          }
+          coordsString = coordsString.slice(0, -1);
+          let radiuses = "";
+          for (let i = 0; i < coordsList.length; i++) {
+            radiuses += "50;";
+          }
+          radiuses = radiuses.slice(0, -1);
+          fetch(
+            `https://api.mapbox.com/matching/v5/mapbox/walking/${coordsString}.json?access_token=${process.env.REACT_APP_MAPBOX_KEY}&radiuses=${radiuses}`
+          ).then((response) =>
+            response.json().then((data) => {
+              console.log(data);
+            })
+          );
+        });
+      }
+    );
+  }, [start, end, weight]);
 
   useEffect(() => {
     fetch("https://overpass-api.de/api/interpreter", {
@@ -42,23 +82,9 @@ out;
         setMarkers(
           x.elements
             .filter((e: any) => e.tags?.amenity)
-            .map((e: any) => [e.lat, e.lon])
+            .map((e: any) => [e.lon, e.lat])
         )
       );
-    if (start && end) {
-      fetch(
-        pathFindingURL
-          .replace("{from}", encodeURIComponent(start.join(",")))
-          .replace("{to}", encodeURIComponent(end.join(",")))
-      )
-        .then((response) => response.json() as Promise<PathFindingResponse>)
-        .then((response) => {
-          setRoute(response.plan.itineraries);
-        })
-        .catch((error) => {
-          console.error("Error:", error);
-        });
-    }
   }, [start, end]);
 
   let refs = usePlacesWidget({
@@ -151,6 +177,8 @@ out;
         />
       </Paper>
 
+      <Switch sx={{position: 'absolute', bottom: '1%', zIndex: '5'}} checked={weight} onChange={(e) => setWeight(e.target.checked)}></Switch>
+
       <ClickableMap
         start={start}
         end={end}
@@ -161,10 +189,10 @@ out;
         attributionControl={false}
         style={{ width: "100vw", height: "100vh" }}
       >
-        {route && (
-          <Source id="route" type="geojson" data={routeToFeature(route)}>
+        {newRoute && (
+          <Source id="route" type="geojson" data={coordsToFeature(newRoute)}>
             <Layer
-              id="route"
+              id="route-layer"
               type="line"
               source="route"
               paint={{ "line-width": 3 }}
