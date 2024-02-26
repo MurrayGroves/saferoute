@@ -16,7 +16,9 @@ const vertices = {
   v2: { x: 200, y: 200 }, // Right vertex
 };
 
-const TriangleSelector: React.FC = () => {
+const TriangleSelector: React.FC<{
+  onChange: (a: number, b: number, c: number) => void;
+}> = ({ onChange }) => {
   // Adjust these points to match your triangle's vertices
 
   // Calculate centroid for the starting point
@@ -34,33 +36,37 @@ const TriangleSelector: React.FC = () => {
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const svgRef = useRef<SVGSVGElement>(null);
 
-  const updateValuesAndPoint = useCallback((x: number, y: number) => {
-    // Assuming the SVG coordinate space for calculations
-    const { v0, v1, v2 } = vertices;
-    const denominator =
-      (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
-    let a =
-      ((v1.y - v2.y) * (x - v2.x) + (v2.x - v1.x) * (y - v2.y)) / denominator;
-    let b =
-      ((v2.y - v0.y) * (x - v2.x) + (v0.x - v2.x) * (y - v2.y)) / denominator;
-    let c = 1 - a - b;
+  const updateValuesAndPoint = useCallback(
+    (x: number, y: number) => {
+      // Assuming the SVG coordinate space for calculations
+      const { v0, v1, v2 } = vertices;
+      const denominator =
+        (v1.y - v2.y) * (v0.x - v2.x) + (v2.x - v1.x) * (v0.y - v2.y);
+      let a =
+        ((v1.y - v2.y) * (x - v2.x) + (v2.x - v1.x) * (y - v2.y)) / denominator;
+      let b =
+        ((v2.y - v0.y) * (x - v2.x) + (v0.x - v2.x) * (y - v2.y)) / denominator;
+      let c = 1 - a - b;
 
-    if (a >= 0 && b >= 0 && c >= 0) {
-      // Check if the point is inside the triangle
-      a = Math.max(0, a * 100);
-      b = Math.max(0, b * 100);
-      c = Math.max(0, c * 100);
+      if (a >= 0 && b >= 0 && c >= 0) {
+        // Check if the point is inside the triangle
+        a = Math.max(0, a * 100);
+        b = Math.max(0, b * 100);
+        c = Math.max(0, c * 100);
 
-      const total = a + b + c;
-      setValues({
-        a: (a / total) * 100,
-        b: (b / total) * 100,
-        c: (c / total) * 100,
-      });
+        const total = a + b + c;
+        setValues({
+          a: (a / total) * 100,
+          b: (b / total) * 100,
+          c: (c / total) * 100,
+        });
 
-      setSelectedPoint({ x, y });
-    }
-  }, []);
+        setSelectedPoint({ x, y });
+        onChange(a, b, c);
+      }
+    },
+    [onChange]
+  );
 
   const handleMouseDown = useCallback(
     (event: React.MouseEvent<SVGSVGElement, MouseEvent>) => {

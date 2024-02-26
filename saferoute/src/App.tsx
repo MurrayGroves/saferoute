@@ -76,8 +76,7 @@ function App() {
 
   return (
     <div className="App" style={{ justifyContent: "center", display: "flex" }}>
-      <TripleSlider></TripleSlider>
-      {/* <Paper
+      <Paper
         sx={{
           borderRadius: "10px",
           width: "90%",
@@ -149,7 +148,7 @@ function App() {
             />
           </Source>
         )}
-      </ClickableMap> */}
+      </ClickableMap>
     </div>
   );
 }
