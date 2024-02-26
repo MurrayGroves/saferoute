@@ -14,7 +14,7 @@ def add_combined_index(G, precision=None):
     if precision is None:
         precision = 1
     edges = utils_graph.graph_to_gdfs(G, nodes=False, fill_edge_geometry=False)
-    edges["combinedIndex"] = edges["travel_time"] + edges["safety"] / 1000
+    edges["combinedIndex"] = edges["travel_time"] + edges["safety"] / 50
     nx.set_edge_attributes(G, values=edges["combinedIndex"], name="combinedIndex")
     return G
 
@@ -38,7 +38,7 @@ def crime_score(crime, score):
     return score
 
 
-ox.settings.all_oneway=True
+ox.settings.all_oneway=False
 G = ox.graph_from_place("Bristol, UK", network_type="walk")
 G = ox.add_edge_speeds(G)
 G = ox.add_edge_travel_times(G)
@@ -88,6 +88,7 @@ def get_route():
     startLat, startLong = start.split(",")
     end = flask.request.args.get("end")
     endLat, endLong = end.split(",")
+    weight = flask.request.args.get("weight")
 
     _, startIndex = kd_tree.query((float(startLong), float(startLat)))
     _, endIndex = kd_tree.query((float(endLong), float(endLat)))
@@ -98,7 +99,7 @@ def get_route():
     print(G.nodes[startNode])
     print(G.nodes[endNode])
 
-    route = nx.shortest_path(G, startNode, endNode, weight='combinedIndex')
+    route = nx.shortest_path(G, startNode, endNode, weight=weight)
     coords = []
     for r in route:
         x = G.nodes[r]['x']

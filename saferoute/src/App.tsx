@@ -3,7 +3,7 @@ import { Layer, Source } from "react-map-gl/maplibre";
 
 import "./App.css";
 import { Marker } from "react-map-gl/maplibre";
-import { Paper } from "@mui/material";
+import { Paper, Switch, ToggleButton } from "@mui/material";
 
 import { usePlacesWidget } from "react-google-autocomplete";
 import { ClickableMap } from "./ClickableMap";
@@ -27,13 +27,14 @@ function App() {
   const [end, setEnd] = React.useState<LatLong>();
   const [markers, setMarkers] = React.useState<LatLong[]>([]);
   const [newRoute, setNewRoute] = useState<LatLong[]>();
+  const [weight, setWeight] = useState(true);
 
   useEffect(() => {
     if (!start || !end) {
       setNewRoute(undefined);
       return;
     }
-    fetch(`http://localhost:8080/route?start=${start}&end=${end}`).then(
+    fetch(`http://localhost:8080/route?start=${start}&end=${end}&weight=${weight ? 'combinedIndex': 'travel_time'}`).then(
       (response) => {
         response.json().then((data) => {
           let coordsList = data["route"];
@@ -59,7 +60,7 @@ function App() {
         });
       }
     );
-  }, [start, end]);
+  }, [start, end, weight]);
 
   useEffect(() => {
     fetch("https://overpass-api.de/api/interpreter", {
@@ -175,6 +176,8 @@ out;
           }}
         />
       </Paper>
+
+      <Switch sx={{position: 'absolute', bottom: '1%', zIndex: '5'}} checked={weight} onChange={(e) => setWeight(e.target.checked)}></Switch>
 
       <ClickableMap
         start={start}
