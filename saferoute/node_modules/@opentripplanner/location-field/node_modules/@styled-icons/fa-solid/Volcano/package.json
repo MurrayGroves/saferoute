@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "sideEffects": false,
+  "main": "./Volcano.js",
+  "module": "./Volcano.esm.js",
+  "types": "./Volcano.d.ts"
+}

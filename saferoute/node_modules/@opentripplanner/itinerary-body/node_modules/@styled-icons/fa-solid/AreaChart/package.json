@@ -1,0 +1,7 @@
+{
+  "private": true,
+  "sideEffects": false,
+  "main": "./AreaChart.js",
+  "module": "./AreaChart.esm.js",
+  "types": "./AreaChart.d.ts"
+}

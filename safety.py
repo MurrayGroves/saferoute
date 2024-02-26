@@ -6,7 +6,9 @@ import numpy as np
 from scipy.spatial import KDTree
 import time
 import matplotlib.pyplot as plt
-G = ox.graph_from_place("Bristol, UK", network_type="walk")
+
+import flask
+
 def add_combined_index(G, precision=None):
     if precision is None:
         precision = 1
@@ -71,13 +73,35 @@ with open("crime_data.csv", newline='') as f:
         G[edges[index][0]][edges[index][1]][0]["safety"] = crime_score(row[2], safety)
 
 G = add_combined_index(G)
-orig, dest = list(G)[0], list(G)[5]
-route = nx.shortest_path(G, orig, dest, weight='combinedIndex')
-coords = []
-for r in route:
-    x = G.nodes[r]['x']
-    y = G.nodes[r]['y']
-    coords.append((y,x))
+
+
+app = flask.Flask(__name__)
+
+@app.route("/route")
+def get_route():
+    start = flask.request.args.get("start")
+    startLat, startLong = start.split(",")
+    end = flask.request.args.get("end")
+    endLat, endLong = end.split(",")
+
+    _, startIndex = kd_tree.query((float(startLong), float(startLat)))
+    _, endIndex = kd_tree.query((float(endLong), float(endLat)))
+
+    startNode = edges[startIndex][0]
+    endNode = edges[endIndex][1]
+
+    route = nx.shortest_path(G, startNode, endNode, weight='combinedIndex')
+    coords = []
+    for r in route:
+        x = G.nodes[r]['x']
+        y = G.nodes[r]['y']
+        coords.append((y,x))
+
+    return {"route": coords}
+
+
+if __name__ == '__main__':
+    app.run(host="localhost", port=8080, debug=True)
 
 
 
