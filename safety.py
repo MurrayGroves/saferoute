@@ -2,13 +2,16 @@ import csv
 import osmnx as ox
 import networkx as nx
 import osmnx.utils_graph as utils_graph
-
+import numpy as np
+from scipy.spatial import KDTree
+import time
+import matplotlib.pyplot as plt
 G = ox.graph_from_place("Bristol, UK", network_type="walk")
 def add_combined_index(G, precision=None):
     if precision is None:
         precision = 1
     edges = utils_graph.graph_to_gdfs(G, nodes=False, fill_edge_geometry=False)
-    edges["combinedIndex"] = edges["travel_time"] + edges["safety"]
+    edges["combinedIndex"] = edges["travel_time"] + edges["safety"] / 1000
     nx.set_edge_attributes(G, values=edges["combinedIndex"], name="combinedIndex")
     return G
 
@@ -37,8 +40,22 @@ G = ox.graph_from_place("Bristol, UK", network_type="walk")
 G = ox.add_edge_speeds(G)
 G = ox.add_edge_travel_times(G)
 G = add_edge_safety_index(G)
-G = add_combined_index(G)
-rounded_edge = {}
+
+
+def get_reference_points(G):
+    references = []
+    edges = []
+    for source, destination, _ in G.edges:
+        x = (G.nodes[source]['x'] - G.nodes[destination]["x"])/2 + G.nodes[destination]['x']
+        y = (G.nodes[source]['y'] - G.nodes[destination]['y'])/2 + G.nodes[destination]['y']
+        references.append((x, y))
+        edges.append((source, destination))
+    return references, edges
+
+references, edges = get_reference_points(G)
+references = np.array(references)
+kd_tree = KDTree(references)
+queries = []
 with open("crime_data.csv", newline='') as f:
     reader = csv.reader(f, delimiter=',')
     linecount = 1
@@ -47,21 +64,16 @@ with open("crime_data.csv", newline='') as f:
             linecount += 1
             continue
         longitude = float(row[0])
-        longitude = round(longitude, 3)
         latitude = float(row[1])
-        latitude = round(latitude, 3)
-        pair = str(longitude) + str(latitude)
-        if not pair in rounded_edge.keys():
-            edges = ox.nearest_edges(G, longitude, latitude)
-            rounded_edge[pair] = edges
-        else:
-            edges = rounded_edge[pair]
-        safety = G[edges[0]][edges[1]][0]["safety"]
-        G[edges[0]][edges[1]][0]["safety"] = crime_score(row[2], safety)
-        print(linecount)
-        linecount += 1
-ox.save_graphml(G, "anotherone.graphml")
+        if longitude < -2.642410 or longitude > -2.463330 or latitude < 51.401792 or latitude > 51.523830:
+            continue
+        _, index = kd_tree.query((longitude, latitude))
+        safety = G[edges[index][0]][edges[index][1]][0]["safety"]
+        G[edges[index][0]][edges[index][1]][0]["safety"] = crime_score(row[2], safety)
+        print(G[edges[index][0]][edges[index][1]][0]["safety"], references[index])
 
-        
-        
+G = add_combined_index(G)
+orig, dest = list(G)[0], list(G)[-1]
+route = nx.shortest_path(G, orig, dest, weight='combinedIndex')
+print(route)
 
