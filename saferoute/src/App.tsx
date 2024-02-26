@@ -1,4 +1,4 @@
-import React, { useEffect, RefObject } from "react";
+import React, { useEffect, RefObject, useState } from "react";
 import { Layer, Source } from "react-map-gl/maplibre";
 
 import "./App.css";
@@ -7,13 +7,25 @@ import { Paper } from "@mui/material";
 
 import { usePlacesWidget } from "react-google-autocomplete";
 import { ClickableMap } from "./ClickableMap";
-import { GeolocateControl } from "maplibre-gl";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { LatLong, PatchedItinerary, PathFindingResponse } from "./types";
 import { routeToFeature } from "./routeUtils";
+import { Feature, LineString } from "geojson";
 
 const pathFindingURL =
   "http://100.86.237.92:8080/otp/routers/default/plan?fromPlace={from}&toPlace={to}}&time=2:05pm&date=25-02-24&MODE=BICYCLE&arriveBy=FALSE&showIntermediateStops=true&wheelchair=TRUE";
+
+function coordsToFeature(coords: LatLong[]): Feature<LineString> {
+  return {
+    type: "Feature",
+    properties: {},
+    geometry: {
+      type: "LineString",
+      coordinates: coords,
+    },
+  };
+
+}
 
 function App() {
   const [search, setSearch] = React.useState("");
@@ -22,6 +34,32 @@ function App() {
   const [end, setEnd] = React.useState<LatLong>();
   const [route, setRoute] = React.useState<PatchedItinerary[]>();
   const [markers, setMarkers] = React.useState<LatLong[]>([]);
+  const [newRoute, setNewRoute] = useState([]);
+
+  useEffect(() => {
+    if (!start || !end) return;
+    fetch(`http://localhost:8080/route?start=${start}&end=${end}`).then((response) => {
+      response.json().then((data) => {
+        let coordsList = data["route"]
+        console.log(coordsList);
+        setNewRoute(coordsList);
+        let coordsString = ""
+        for (let i = 0; i < coordsList.length; i++) {
+          coordsString += coordsList[i][0] + "," + coordsList[i][1] + ";"
+        }
+        coordsString = coordsString.slice(0, -1)
+        let radiuses = ""
+        for (let i = 0; i < coordsList.length; i++) {
+          radiuses += "50;"
+        }
+        radiuses = radiuses.slice(0, -1)
+        fetch(`https://api.mapbox.com/matching/v5/mapbox/walking/${coordsString}.json?access_token=${process.env.REACT_APP_MAPBOX_KEY}&radiuses=${radiuses}`)
+        .then((response) => response.json().then((data) => {
+          console.log(data);
+        }))
+      })
+    });
+  }, [end]);
 
   useEffect(() => {
     fetch("https://overpass-api.de/api/interpreter", {
@@ -163,7 +201,7 @@ out;
         style={{ width: "100vw", height: "100vh" }}
       >
         {route && (
-          <Source id="route" type="geojson" data={routeToFeature(route)}>
+          <Source id="route" type="geojson" data={coordsToFeature(newRoute)}>
             <Layer
               id="route"
               type="line"

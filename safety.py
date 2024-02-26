@@ -1,4 +1,5 @@
 import csv
+from flask_cors import CORS, cross_origin
 import osmnx as ox
 import networkx as nx
 import osmnx.utils_graph as utils_graph
@@ -77,7 +78,11 @@ G = add_combined_index(G)
 
 app = flask.Flask(__name__)
 
+cors = CORS(app, resources={r"/route": {"origins": "*"}})
+
+
 @app.route("/route")
+@cross_origin(origin='*',headers=['Content- Type','Authorization'])
 def get_route():
     start = flask.request.args.get("start")
     startLat, startLong = start.split(",")
@@ -87,8 +92,11 @@ def get_route():
     _, startIndex = kd_tree.query((float(startLong), float(startLat)))
     _, endIndex = kd_tree.query((float(endLong), float(endLat)))
 
-    startNode = edges[startIndex][0]
+    startNode = edges[startIndex][1]
     endNode = edges[endIndex][1]
+
+    print(G.nodes[startNode])
+    print(G.nodes[endNode])
 
     route = nx.shortest_path(G, startNode, endNode, weight='combinedIndex')
     coords = []
@@ -96,6 +104,8 @@ def get_route():
         x = G.nodes[r]['x']
         y = G.nodes[r]['y']
         coords.append((y,x))
+
+    print(coords)
 
     return {"route": coords}
 
