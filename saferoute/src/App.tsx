@@ -3,7 +3,7 @@ import { Layer, Source } from "react-map-gl/maplibre";
 
 import "./App.css";
 import { Marker } from "react-map-gl/maplibre";
-import { Paper, Switch, ToggleButton } from "@mui/material";
+import { FormControlLabel, FormGroup, Paper, Switch, ToggleButton } from "@mui/material";
 
 import { usePlacesWidget } from "react-google-autocomplete";
 import { ClickableMap } from "./ClickableMap";
@@ -187,7 +187,12 @@ out;
         />
       </Paper>
 
-      <Switch sx={{position: 'absolute', bottom: '1%', zIndex: '5'}} checked={weight} onChange={(e) => setWeight(e.target.checked)}></Switch>
+      <Paper sx={{ position: 'absolute', bottom: '2%', zIndex: '5', paddingLeft: '3%', paddingRight: '1%' }}>
+      <FormGroup >
+        <FormControlLabel control={<Switch checked={weight} onChange={(e) => setWeight(e.target.checked)} />} label={"Fastest/Safest"}/>
+      </FormGroup>
+      </Paper>
+      
 
       <ClickableMap
         start={start}
