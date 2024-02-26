@@ -2,14 +2,13 @@ import React, { useEffect, RefObject } from "react";
 import { Layer, Source } from "react-map-gl/maplibre";
 
 import "./App.css";
-import { Paper, TextField } from "@mui/material";
+import { Paper } from "@mui/material";
 
-import Autocomplete, { usePlacesWidget } from "react-google-autocomplete";
+import { usePlacesWidget } from "react-google-autocomplete";
 import { ClickableMap } from "./ClickableMap";
 import "maplibre-gl/dist/maplibre-gl.css";
 import { LatLong, PatchedItinerary, PathFindingResponse } from "./types";
 import { routeToFeature } from "./routeUtils";
-import TripleSlider from "./TriangleSelect";
 
 const pathFindingURL =
   "http://100.86.237.92:8080/otp/routers/default/plan?fromPlace={from}&toPlace={to}}&time=2:05pm&date=25-02-24&MODE=BICYCLE&arriveBy=FALSE&showIntermediateStops=true&wheelchair=FALSE";
