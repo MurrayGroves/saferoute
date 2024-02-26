@@ -1,4 +1,6 @@
 import csv
+import math
+import os
 from flask_cors import CORS, cross_origin
 import osmnx as ox
 import networkx as nx
@@ -14,8 +16,8 @@ def add_combined_index(G, precision=None):
     if precision is None:
         precision = 1
     edges = utils_graph.graph_to_gdfs(G, nodes=False, fill_edge_geometry=False)
-    edges["combinedIndex"] = edges["travel_time"] + edges["safety"] / 50
-    nx.set_edge_attributes(G, values=edges["combinedIndex"], name="combinedIndex")
+    edges["combined_index"] = edges["travel_time"] + edges["safety"]
+    nx.set_edge_attributes(G, values=edges["combined_index"], name="combined_index")
     return G
 
 def add_edge_safety_index(G, precision=None):
@@ -39,10 +41,33 @@ def crime_score(crime, score):
 
 
 ox.settings.all_oneway=False
-G = ox.graph_from_place("Bristol, UK", network_type="walk")
-G = ox.add_edge_speeds(G)
+if not os.path.exists("bristol.graphml"):
+    print("Downloading graph")
+    G = ox.graph_from_place("Bristol, UK", network_type="walk")
+    ox.save_graphml(G, "bristol.graphml")
+    print("Graph saved!")
+else:
+    print("Loading graph")
+    G = ox.load_graphml("bristol.graphml")
+    print("Graph loaded!")
+
+nx.set_edge_attributes(G, values=4, name="speed_kph")
 G = ox.add_edge_travel_times(G)
 G = add_edge_safety_index(G)
+
+def add_node(G, connectingNodes, x, y, direction):
+    newId = f"{len(G.nodes) + 1}-custom"
+    G.add_node(newId, x=x, y=y)
+    for node in connectingNodes:
+        print("Adding edge ", newId, node)
+        distance = 40
+        travelTime = distance / 4
+        if direction:
+            G.add_edge(newId, node, length=distance, travel_time=travelTime, safety=1, combined_index=travelTime+1, speed_kph=4, oneway=False)
+        else:
+            G.add_edge(node, newId, length=distance, travel_time=travelTime, safety=1, combined_index=travelTime+1, speed_kph=4, oneway=False)
+
+    return newId
 
 
 def get_reference_points(G):
@@ -80,6 +105,9 @@ app = flask.Flask(__name__)
 
 cors = CORS(app, resources={r"/route": {"origins": "*"}})
 
+def myFunc(x, y, atts):
+    print(x, y, atts)
+    return atts.get("travel_time", 1)
 
 @app.route("/route")
 @cross_origin(origin='*',headers=['Content- Type','Authorization'])
@@ -93,11 +121,11 @@ def get_route():
     _, startIndex = kd_tree.query((float(startLong), float(startLat)))
     _, endIndex = kd_tree.query((float(endLong), float(endLat)))
 
-    startNode = edges[startIndex][1]
-    endNode = edges[endIndex][1]
+    startNodes = edges[startIndex]
+    endNodes = edges[endIndex]
 
-    print(G.nodes[startNode])
-    print(G.nodes[endNode])
+    startNode = add_node(G, startNodes, float(startLong), float(startLat), True)
+    endNode = add_node(G, endNodes, float(endLong), float(endLat), False)
 
     route = nx.shortest_path(G, startNode, endNode, weight=weight)
     coords = []
