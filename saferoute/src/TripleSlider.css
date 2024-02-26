@@ -1,0 +1,29 @@
+.triple-slider {
+  width: 0;
+  height: 0;
+  border-left: 50px solid transparent;
+  border-right: 50px solid transparent;
+  border-bottom: 100px solid #ddd;
+  position: relative;
+}
+
+.slider-x,
+.slider-y,
+.slider-z {
+  position: absolute;
+  width: 100px;
+  left: 50%;
+  transform: translateX(-50%);
+}
+
+.slider-x {
+  top: -20px;
+}
+
+.slider-y {
+  top: 50px;
+}
+
+.slider-z {
+  bottom: -20px;
+}
