@@ -1,0 +1,1 @@
+export type UnwrapForwardRefExoticComponent<T> = T extends React.ForwardRefExoticComponent<infer P> ? P : never;
