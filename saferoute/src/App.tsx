@@ -40,23 +40,6 @@ function App() {
           let coordsList = data["route"];
           console.log(coordsList);
           setNewRoute(coordsList);
-          let coordsString = "";
-          for (let i = 0; i < coordsList.length; i++) {
-            coordsString += coordsList[i][0] + "," + coordsList[i][1] + ";";
-          }
-          coordsString = coordsString.slice(0, -1);
-          let radiuses = "";
-          for (let i = 0; i < coordsList.length; i++) {
-            radiuses += "50;";
-          }
-          radiuses = radiuses.slice(0, -1);
-          fetch(
-            `https://api.mapbox.com/matching/v5/mapbox/walking/${coordsString}.json?access_token=${process.env.REACT_APP_MAPBOX_KEY}&radiuses=${radiuses}`
-          ).then((response) =>
-            response.json().then((data) => {
-              console.log(data);
-            })
-          );
         });
       }
     );
