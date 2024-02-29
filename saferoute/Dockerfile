@@ -12,6 +12,6 @@ ENV BROWSER=none
 LABEL org.opencontainers.image.source https://github.com/MurrayGroves/saferoute
 
 # Install dependencies
-RUN npm install
+RUN yarn install
 
-CMD ["npm", "start"]
+CMD ["yarn", "start"]
