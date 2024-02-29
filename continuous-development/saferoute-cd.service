@@ -3,6 +3,8 @@ Description=Start webhook listener for saferoute app
 
 [Service]
 ExecStart=/home/mediaserver/configs/saferoute/saferoute/continuous-development/webhook_listener.py
+User=mediaserver
+WorkingDirectory=/home/mediaserver/configs/saferoute/saferoute/continuous-development
 
 [Install]
 WantedBy=multi-user.target
