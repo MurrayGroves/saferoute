@@ -1,5 +1,4 @@
 import csv
-import math
 import os
 from flask_cors import CORS, cross_origin
 import osmnx as ox
@@ -7,8 +6,6 @@ import networkx as nx
 import osmnx.utils_graph as utils_graph
 import numpy as np
 from scipy.spatial import KDTree
-import time
-import matplotlib.pyplot as plt
 
 import flask
 
@@ -127,13 +124,13 @@ G = add_combined_index(G)
 
 app = flask.Flask(__name__)
 
-cors = CORS(app, resources={r"/route": {"origins": "*"}})
+cors = CORS(app, resources={r"/api/route": {"origins": "*"}})
 
 def myFunc(x, y, atts):
     print(x, y, atts)
     return atts.get("travel_time", 1)
 
-@app.route("/route")
+@app.route("/api/route")
 @cross_origin(origin='*',headers=['Content- Type','Authorization'])
 def get_route():
     start = flask.request.args.get("start")
