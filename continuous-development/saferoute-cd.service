@@ -1,0 +1,8 @@
+[Unit]
+Description=Start webhook listener for saferoute app
+
+[Service]
+ExecStart=/home/mediaserver/configs/saferoute/saferoute/continuous-development/webhook_listener.py
+
+[Install]
+WantedBy=multi-user.target
