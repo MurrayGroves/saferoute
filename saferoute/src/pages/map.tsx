@@ -11,7 +11,7 @@ import "maplibre-gl/dist/maplibre-gl.css";
 import { LatLong } from "../types";
 import { Feature, LineString } from "geojson";
 
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 
 function coordsToFeature(coords: LatLong[]): Feature<LineString> {
   return {
@@ -32,6 +32,14 @@ export default () => {
   const [weight, setWeight] = useState(true);
 
   const navigate = useNavigate();
+  const params = useParams();
+  useEffect(() => {
+    if (params.start && params.end) {
+        console.log("parm")
+        setStart(params.start.split(',').map(parseFloat) as LatLong);
+        setEnd(params.end.split(',').map(parseFloat) as LatLong);
+      }    
+  }, [])
 
   useEffect(() => {
     if (!start || !end) {
@@ -50,7 +58,7 @@ export default () => {
   }, [start, end, weight]);
 
   useEffect(() => {
-    navigate('/?start=' + start + '&end=' + end)
+    navigate('/map/' + start + '/' + end)
   }, [start, end])
 
   useEffect(() => {
