@@ -1,14 +1,14 @@
 services:
   backend:
     container_name: saferoute-backend
-    image: ghcr.io/murraygroves/saferoute/backend:dev
+    image: ghcr.io/murraygroves/saferoute/backend:latest
     ports:
       - 8920:8080
     pull_policy: always
 
   frontend:
     container_name: cityfarm-frontend
-    image: ghcr.io/murraygroves/saferoute/frontend:dev
+    image: ghcr.io/murraygroves/saferoute/frontend:latest
     environment:
       - REACT_APP_HOSTPATH=https://saferoute.murraygrov.es
     ports:
