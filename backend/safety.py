@@ -54,6 +54,7 @@ else:
     G = ox.load_graphml("bristol.graphml")
     print("Graph loaded!")
 
+G = nx.MultiGraph(G)
 nx.set_edge_attributes(G, values=4, name="speed_kph")
 G = ox.add_edge_travel_times(G)
 G = add_edge_safety_index(G)
