@@ -1,5 +1,5 @@
 # [Saferoute](https://saferoute.murraygrov.es)
-For [BrisHack](https://brishack.io) the brief was "Health" - one of the categories was mental health and this was our take. If you're travelling by yourself (especially late at night), speed might not be the priority when it comes to getting home.
+For [BrisHack](https://brishack.io) 2024 the brief was "Health" - one of the categories was mental health and this was our take. If you're travelling by yourself (especially late at night), speed might not be the priority when it comes to getting home.
 You might prefer a slower route that routes you around a dangerous area.
 
 ## Tech
