@@ -5,6 +5,9 @@ You might prefer a slower route that routes you around a dangerous area.
 ## Tech
 We use networkx and osmnx for routing - using dijkstra's where the weights of each edge is a combination of time and also the number and severity of crimes where that was the closest edge.
 
+## Limitations
+Currently there's no way of the user adjusting the weights. Also it only works in Bristol as that's the only place we have the data for.
+
 ## Data Sources
 [Crime Data](https://opendata.bristol.gov.uk/datasets/bcc::street-crime-incidents/about)
 [Streetlight Data](https://opendata.bristol.gov.uk/datasets/bcc::streetlights/about)
