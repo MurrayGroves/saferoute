@@ -8,7 +8,7 @@ services:
     restart: unless-stopped
 
   frontend:
-    container_name: cityfarm-frontend
+    container_name: saferoute-frontend
     image: ghcr.io/murraygroves/saferoute/frontend:latest
     environment:
       - REACT_APP_HOSTPATH=https://saferoute.murraygrov.es
