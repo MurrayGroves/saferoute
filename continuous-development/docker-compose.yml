@@ -1,3 +1,6 @@
+name:
+  saferoute
+
 services:
   backend:
     container_name: saferoute-backend
@@ -5,6 +8,7 @@ services:
     ports:
       - 8920:8080
     pull_policy: always
+
     restart: unless-stopped
 
   frontend:
@@ -12,6 +16,7 @@ services:
     image: ghcr.io/murraygroves/saferoute/frontend:latest
     environment:
       - REACT_APP_HOSTPATH=https://saferoute.murraygrov.es
+      - REACT_APP_GOOGLE_KEY=AIzaSyCJVcENXdtmm-BnM6IOR5AXjn7_AnRgdBo
     ports:
       - 8921:3000
     pull_policy: always
