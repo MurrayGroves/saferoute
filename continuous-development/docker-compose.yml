@@ -8,7 +8,8 @@ services:
     ports:
       - 8920:8080
     pull_policy: always
-    restart_policy: unless_stopped
+
+    restart: unless-stopped
 
   frontend:
     container_name: saferoute-frontend
@@ -19,4 +20,4 @@ services:
     ports:
       - 8921:3000
     pull_policy: always
-    restart_policy: unless_stopped
+    restart: unless-stopped
